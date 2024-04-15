@@ -2,7 +2,7 @@
   <v-app>
     <v-navigation-drawer v-model="drawer" temporary>
       <v-list-item
-        v-if="isLoggedIn"
+        v-if="isLoggedIn && user"
         prepend-avatar="https://randomuser.me/api/portraits/men/78.jpg"
         :title="user.name"
       ></v-list-item>

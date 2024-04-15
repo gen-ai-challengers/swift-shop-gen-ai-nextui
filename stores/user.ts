@@ -99,7 +99,6 @@ export const useUserStore = defineStore("userStore", {
           body: formData,
         });
         await this.getUser();
-        this.isLoggedIn = true;
       } catch (error) {
         console.error(error);
         throw error;

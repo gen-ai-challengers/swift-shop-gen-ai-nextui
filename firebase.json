@@ -23,8 +23,7 @@
         "source": "/api/**",
         "run": {
           "serviceId": "swift-shop-gen-ai-fr",
-          "region": "asia-south1", 
-          "pinTag": true
+          "region": "asia-south1"
         }
       },
       {

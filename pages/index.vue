@@ -2,7 +2,7 @@
   <v-sheet class="add-face mx-auto" width="300">
     <v-form ref="form">
 
-      <div v-if="isLoggedIn" class="text-body-2"> Hi {{ user.name }} Welcom to swift shop gen ai.</div>
+      <div v-if="isLoggedIn && user" class="text-body-2"> Hi {{ user.name }} Welcom to swift shop gen ai.</div>
       <div v-if="progress && progress < 100" class="text-body-2">Recognizing the face and logging you in....</div>
 
       <v-video
