@@ -18,7 +18,7 @@ export default defineNuxtPlugin((app) => {
     error: (data: any) => {
       console.log("showing error toast");
       console.log(data?.response?._data);
-      const message = data?.response?._data?.errors?.[0] || data.message || "An error occurred !";
+      const message = data?.response?._data?.message || data?.response?._data?.errors?.[0] || data.message || "An error occurred !";
       console.log(message);
       useNotificationStore().setNotification({
         message,
