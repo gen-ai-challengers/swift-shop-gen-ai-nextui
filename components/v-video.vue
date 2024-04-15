@@ -64,12 +64,17 @@ const updateTimeStats = (timeInMs) => {
  * @description detect input video
  */
 const runModel = async () => {
+  if (!canvasEl.value||!videoEl.value){
+    return;
+  }
   const beforeDetect = Date.now();
   const result = await faceAPI
     .detectAllFaces(videoEl.value, initParams.option)
     .withAgeAndGender();
   updateTimeStats(Date.now() - beforeDetect);
-
+  if (!canvasEl.value||!videoEl.value){
+    return;
+  }
   if (result) {
     const dims = faceAPI.matchDimensions(canvasEl.value, videoEl.value, true);
     const resizeResults = faceAPI.resizeResults(result, dims);
@@ -87,7 +92,7 @@ const runModel = async () => {
         delete faceData.detection;
         faceData.videoEl = videoEl;
         faceData.canvasEl = canvasEl;
-        emit("faceDetected", faceData );
+        emit("faceDetected", faceData);
       }
     }
     faceAPI.draw.drawDetections(canvasEl.value, facesWithHighScore);
@@ -119,6 +124,17 @@ onMounted(() => {
   };
 
   initModel().then(() => startStream());
+});
+onBeforeUnmount(() => {
+  /**
+   * stop webcam
+   * @function
+   */
+  const stopStream = () => {
+    videoEl.value.srcObject.getTracks().forEach((track) => track.stop());
+  };
+
+  stopStream();
 });
 </script>
   

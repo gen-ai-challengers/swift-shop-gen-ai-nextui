@@ -82,7 +82,13 @@ export default {
         const faceData = {
           dataUrl: this.$refs.canvasEl.toDataURL(),
         };
-        this.addFace(faceData);
+        try {
+          await this.addFace(faceData);
+          this.$toast.show("Face added successfully");
+          this.$router.push("/");
+        } catch (error) {
+          this.$toast.error(error);
+        }
       }
     },
     reset() {

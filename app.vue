@@ -2,6 +2,7 @@
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>
+  <v-toast />
 </template>
 <script>
 import { mapActions } from "pinia";
