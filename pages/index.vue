@@ -49,7 +49,6 @@
 </template>
   <script>
 import { mapActions, mapState } from "pinia";
-import { set } from "~/node_modules/nuxt/dist/app/compat/capi";
 export default {
   data: () => ({
     faceRecognized: false,
@@ -117,8 +116,8 @@ export default {
           this.$toast.error(e);
 
         } finally {
+          this.progress = 100;
           setTimeout(() => {
-            this.progress = 100;
             this.faceRecognized = false;
             this.processing = false;
             setTimeout(() => {
