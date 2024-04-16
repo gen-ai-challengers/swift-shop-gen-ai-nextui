@@ -73,7 +73,8 @@ export default {
 
       if (this.isLoggedIn || this.faceRecognized || this.processing) return;
       if (data.score < 0.96) {
-        this.progress = 5;
+        this.progress-=5;
+        if (this.progress < 0) this.progress = 0;
         return;
       } else this.progress += 5;
       if (this.progress < 99) return;
