@@ -1,47 +1,61 @@
 <template>
   <v-sheet class="add-face mx-auto" width="300">
     <v-form ref="form">
-
-      <div v-if="isLoggedIn && user" class="text-body-2"> Hi {{ user.name }} Welcom to swift shop gen ai.</div>
-      <div v-if="progress && progress < 100" class="text-body-2">Recognizing the face and logging you in....</div>
-
-      <v-video
-        v-show="progress && progress < 100 || processing"
-        ref="videoEl"
-        @faceDetected="faceDetected"
-        @multipleFacesDetected="multipleFacesDetected"
-      />
-      <canvas v-show="false" ref="canvasEl" class="preview" />
-      <v-progress-linear
-        v-show="progress && progress < 100 || processing"
-        :buffer-value="progress + 10"
-        :model-value="progress"
-        stream
-        color="success"
-        height="10"
-        class="mt-4"
-        :indeterminate="processing"
-      ></v-progress-linear>
-      <v-btn
-        v-show="progress && progress < 100 || processing"
+      <div v-if="isLoggedIn && user" class="text-body-2">
+        Hi {{ user.name }} Welcom to swift shop gen ai.
+      </div>
+      <div v-if=" progress && progress < 100" class="text-body-2">
+        Recognizing the face and logging you in....
+      </div>
+      <v-card>
+        <v-video
+          v-show="(progress && progress < 100) || processing"
+          ref="videoEl"
+          @faceDetected="faceDetected"
+          @multipleFacesDetected="multipleFacesDetected"
+        />
+        <canvas v-show="false" ref="canvasEl" class="preview" />
+        <v-progress-linear
+          v-show="(progress && progress < 100) || processing"
+          :buffer-value="progress + 10"
+          :model-value="progress"
+          stream
+          color="success"
+          height="10"
           class="mt-4"
-          color="error"
-          block
-          @click="cancel"
-        >
-          Cancel
-        </v-btn>
+          :indeterminate="processing"
+        ></v-progress-linear>
+      </v-card>
+      <v-btn
+        v-show="(progress && progress < 100) || processing"
+        class="mt-4"
+        color="error"
+        block
+        @click="cancel"
+      >
+        Cancel
+      </v-btn>
+      <v-btn
+        v-show="!isLoggedIn &&showRegister"
+        class="mt-4"
+        color="success"
+        block
+        to="/register"
+      >
+        Register
+      </v-btn>
     </v-form>
   </v-sheet>
 </template>
   <script>
 import { mapActions, mapState } from "pinia";
-import { set } from '~/node_modules/nuxt/dist/app/compat/capi';
+import { set } from "~/node_modules/nuxt/dist/app/compat/capi";
 export default {
   data: () => ({
     faceRecognized: false,
     progress: 0,
     processing: false,
+    showRegister: false,
   }),
   computed: {
     ...mapState(useUserStore, {
@@ -52,7 +66,7 @@ export default {
   methods: {
     ...mapActions(useUserStore, ["recognizeFaceAndLogin"]),
     async faceDetected(data) {
-      console.log('>> face detected');
+      console.log(">> face detected");
       console.log(this.isLoggedIn);
       console.log(this.faceRecognized);
       console.log(this.processing);
@@ -94,17 +108,22 @@ export default {
         try {
           this.processing = true;
           await this.recognizeFaceAndLogin(faceData);
+          this.$toast.show("Face recognized successfully");
+          this.showRegister = false;
         } catch (e) {
           console.error(e);
+          this.showRegister = true;
+          this.$toast.error(e);
+
         } finally {
-          
-          this.progress = 100;
           setTimeout(() => {
+            this.progress = 100;
             this.faceRecognized = false;
             this.processing = false;
-            this.progress = 0;
-          }, 3000);
-
+            setTimeout(() => {
+              this.progress = 0;
+            }, 3000);
+          }, 5000);
         }
       }
     },
