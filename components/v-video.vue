@@ -36,7 +36,7 @@ const constraints = reactive({
       ideal: 15,
       max: 30,
     },
-    facingMode: "environment",
+    facingMode: { exact: "user" },
   },
 });
 const videoEl = ref(null);
