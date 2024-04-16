@@ -28,6 +28,12 @@
           value="logout"
           @click="logout"
         ></v-list-item>
+        <v-list-item
+          prepend-icon="mdi-face-recognition"
+          title="Avatar"
+          value="avatar"
+          to="/avatar"
+        ></v-list-item>
       </v-list>
 
       <v-list v-if="!isLoggedIn" density="compact" nav>
