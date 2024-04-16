@@ -24,3 +24,4 @@ logs
 !.env.example
 /functions/venv
 /functions/__pycache__/*.pyc
+/.firebase

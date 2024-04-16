@@ -10,17 +10,12 @@ export const useUserStore = defineStore("userStore", {
   }),
   actions: {
     async doLogin(userLogin: UserRegister) {
-      try {
-        await $fetch("/api/login/", {
-          method: "POST",
-          body: JSON.stringify(userLogin),
-        });
-        await this.getUser();
-        this.isLoggedIn = true;
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
+      await $fetch("/api/login/", {
+        method: "POST",
+        body: JSON.stringify(userLogin),
+      });
+      await this.getUser();
+      this.isLoggedIn = true;
     },
     async getUser() {
       try {
@@ -39,31 +34,21 @@ export const useUserStore = defineStore("userStore", {
       }
     },
     async doLogout() {
-      try {
-        await $fetch("/api/logout/", {
-          method: "POST",
-        });
-        this.isLoggedIn = false;
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
+      await $fetch("/api/logout/", {
+        method: "POST",
+      });
+      this.isLoggedIn = false;
     },
     async registerUser() {
       console.log(this.userRegister);
-      try {
-        await $fetch("/api/register/", {
-          method: "POST",
-          body: JSON.stringify(this.userRegister),
-        });
-        await this.getUser();
-        this.isLoggedIn = true;
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
+      await $fetch("/api/register/", {
+        method: "POST",
+        body: JSON.stringify(this.userRegister),
+      });
+      await this.getUser();
+      this.isLoggedIn = true;
     },
-    toFormData (dataUrl: string) {
+    toFormData(dataUrl: string) {
       const arr = dataUrl.split(",");
       const mimeMatch = arr[0].match(/:(.*?);/);
       const mime = mimeMatch ? mimeMatch[1] : "";
@@ -80,29 +65,21 @@ export const useUserStore = defineStore("userStore", {
     },
     async addFace(face: FaceData) {
       const formData = this.toFormData(face.dataUrl);
-      try {
-        await $fetch(`/api/v1/users/${this.userData?.id}/add-face/`, {
-          method: "POST",
-          body: formData,
-        });
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
+
+      await $fetch(`/api/v1/users/${this.userData?.id}/add-face/`, {
+        method: "POST",
+        body: formData,
+      });
     },
     async recognizeFaceAndLogin(face: FaceData) {
       console.log("recognizing face and login");
       const formData = this.toFormData(face.dataUrl);
-      try {
-        await $fetch(`/api/recognize/`, {
-          method: "POST",
-          body: formData,
-        });
-        await this.getUser();
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
+
+      await $fetch(`/api/recognize/`, {
+        method: "POST",
+        body: formData,
+      });
+      await this.getUser();
     },
     setUserRegister(userRegister: UserRegister) {
       this.userRegister = userRegister;

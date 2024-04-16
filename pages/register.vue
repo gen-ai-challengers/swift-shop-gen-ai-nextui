@@ -137,10 +137,14 @@ export default {
       this.mdiIcon = this.inputType === "password" ? "mdi-eye" : "mdi-eye-off";
     },
     async validate() {
-      const { valid } = await this.$refs.form.validate();
+      try {
+        const { valid } = await this.$refs.form.validate();
 
-      if (valid) {
-        this.$router.push("/otp");
+        if (valid) {
+          this.$router.push("/otp");
+        }
+      } catch (e) {
+        this.$toast.error(e);
       }
     },
     reset() {

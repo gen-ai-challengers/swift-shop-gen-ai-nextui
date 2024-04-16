@@ -65,8 +65,7 @@ export default {
         await this.registerUser();
         this.$router.push("/add-face");
         } catch (error) {
-          console.log(error);
-          this.$toast.error("An error occured");
+          this.$toast.error(error);
         }
       }
     },

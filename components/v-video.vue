@@ -1,5 +1,5 @@
 <template>
-  <section class="display">
+  <section class="display" @click="switchFacingMode">
     <video
       ref="videoEl"
       autoplay="true"
@@ -36,7 +36,7 @@ const constraints = reactive({
       ideal: 15,
       max: 30,
     },
-    facingMode: "environment",
+    facingMode: "user",
   },
 });
 const videoEl = ref(null);
@@ -46,6 +46,18 @@ const board = reactive({
 });
 
 let forwardTimes = [];
+
+/**
+ * caculate fps for detection
+ * @function
+ */
+
+const switchFacingMode = () => {
+  const stream = videoEl.value.srcObject;
+  stream.getTracks().forEach((track) => track.stop());
+  constraints.video.facingMode = constraints.video.facingMode === "user" ? "environment" : "user";
+  startStream();
+};
 
 /**
  * caculate fps for detection
@@ -64,12 +76,17 @@ const updateTimeStats = (timeInMs) => {
  * @description detect input video
  */
 const runModel = async () => {
+  if (!canvasEl.value || !videoEl.value) {
+    return;
+  }
   const beforeDetect = Date.now();
   const result = await faceAPI
     .detectAllFaces(videoEl.value, initParams.option)
     .withAgeAndGender();
   updateTimeStats(Date.now() - beforeDetect);
-
+  if (!canvasEl.value || !videoEl.value) {
+    return;
+  }
   if (result) {
     const dims = faceAPI.matchDimensions(canvasEl.value, videoEl.value, true);
     const resizeResults = faceAPI.resizeResults(result, dims);
@@ -87,7 +104,7 @@ const runModel = async () => {
         delete faceData.detection;
         faceData.videoEl = videoEl;
         faceData.canvasEl = canvasEl;
-        emit("faceDetected", faceData );
+        emit("faceDetected", faceData);
       }
     }
     faceAPI.draw.drawDetections(canvasEl.value, facesWithHighScore);
@@ -120,13 +137,24 @@ onMounted(() => {
 
   initModel().then(() => startStream());
 });
+onBeforeUnmount(() => {
+  /**
+   * stop webcam
+   * @function
+   */
+  const stopStream = () => {
+    videoEl.value.srcObject.getTracks().forEach((track) => track.stop());
+  };
+
+  stopStream();
+});
 </script>
   
   <style lang="scss" scoped>
 .display {
   width: 100%;
   height: auto;
-  min-height: 220px;
+  min-height: 320px;
   position: relative;
   > video {
     position: absolute;
@@ -137,17 +165,6 @@ onMounted(() => {
     position: absolute;
     z-index: 10;
     width: 100%;
-  }
-  > .board {
-    font-size: 30px;
-    list-style: none;
-    background-color: rgba(255, 255, 255, 0.65);
-    border-radius: 10px;
-    left: 10px;
-    padding: 15px;
-    position: absolute;
-    top: 10px;
-    z-index: 20;
   }
 }
 </style>

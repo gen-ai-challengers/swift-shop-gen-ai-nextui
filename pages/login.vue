@@ -77,8 +77,12 @@ export default {
       const { valid } = await this.$refs.form.validate();
 
       if (valid) {
-        await this.doLogin({ phone: this.phone, password: this.password });
-        this.$router.push("/");
+        try {
+          await this.doLogin({ phone: this.phone, password: this.password });
+          this.$router.push("/");
+        } catch (e) {
+          this.$toast.error(e);
+        }
       }
     },
     reset() {

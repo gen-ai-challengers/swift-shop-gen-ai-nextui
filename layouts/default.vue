@@ -148,9 +148,6 @@ export default {
   },
   mounted() {
     console.log("App mounted");
-    this.$toast.show({
-      message: "Welcome to site alert will converted to toast !",
-    });
   },
 };
 </script>
