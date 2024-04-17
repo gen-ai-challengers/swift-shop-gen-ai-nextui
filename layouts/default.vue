@@ -76,7 +76,7 @@
       </template>
     </v-app-bar>
     <v-main>
-      <v-container>
+      <v-container class="fill-height" fluid>
         <slot />
       </v-container>
     </v-main>
