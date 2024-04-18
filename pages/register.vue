@@ -17,6 +17,7 @@
       <v-text-field
         autocomplete="one-time-code"
         v-model="phone"
+        prefix="+"
         :counter="15"
         :rules="phoneRules"
         label="Phone Number"
@@ -24,6 +25,7 @@
         required
         clear-icon="mdi-close"
         clearable
+        placeholder="918891XXXXXX"
         variant="underlined"
       ></v-text-field>
 

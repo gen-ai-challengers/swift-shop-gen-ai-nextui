@@ -1,5 +1,8 @@
 // create toast using vutify snackbar
-
+export interface Toast {
+  show: (message: string) => void;
+  error: (data: any) => void;
+}
 export default defineNuxtPlugin((app) => {
   console.log("toast plugin");
   console.log(app);

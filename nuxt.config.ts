@@ -1,18 +1,18 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
+import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
 export default defineNuxtConfig({
   ssr: false,
   devtools: { enabled: true },
   build: {
-    transpile: ['vuetify'],
+    transpile: ["vuetify"],
   },
   modules: [
-    '@pinia/nuxt',
+    "@pinia/nuxt",
     (_options, nuxt) => {
-      nuxt.hooks.hook('vite:extendConfig', (config) => {
+      nuxt.hooks.hook("vite:extendConfig", (config) => {
         // @ts-expect-error
-        config.plugins.push(vuetify({ autoImport: true }))
-      })
+        config.plugins.push(vuetify({ autoImport: true }));
+      });
     },
     //...
   ],
@@ -24,8 +24,20 @@ export default defineNuxtConfig({
     },
   },
   routeRules: {
-    '/api/**': {
-      proxy: 'https://swift-shop-gen-ai-fr-uno67n3s7q-el.a.run.app/api/**',
-    }
+    "/api/**": {
+      proxy: "https://swift-shop-gen-ai-fr-uno67n3s7q-el.a.run.app/api/**",
+    },
   },
-})
+  runtimeConfig: {
+    public: {
+      fb: {
+        apiKey: undefined,
+        authDomain: undefined,
+        projectId: undefined,
+        storageBucket: undefined,
+        messagingSenderId: undefined,
+        appId: undefined,
+      },
+    },
+  },
+});

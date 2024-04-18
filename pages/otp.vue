@@ -1,3 +1,5 @@
+
+
 <template>
   <v-sheet class="mx-auto" width="300">
     <v-form ref="form">
@@ -9,17 +11,29 @@
         Please check your phone and paste the code below.
       </div>
 
+      <div ref="recaptcha">
+
+      </div>
+
       <v-otp-input
         v-model="otp"
         type="text"
         variant="solo"
-        length="4"
+        :loading="loading"
+        length="6"
         :rules="otpRules"
         autocomplete="one-time-code"
+        :error="!!otpRules.find((rule) => rule(otp))"
       ></v-otp-input>
 
       <div class="d-flex flex-column">
-        <v-btn class="mt-4" color="success" block @click="validate">
+        <v-btn
+          class="mt-4"
+          :loading="loading"
+          color="success"
+          block
+          @click="validate"
+        >
           Proceed
         </v-btn>
 
@@ -43,38 +57,80 @@
     </v-form>
   </v-sheet>
 </template>
-<script>
-import { mapActions } from "pinia";
-export default {
-  data: () => ({
-    otp: "",
-    otpRules: [
-      (v) => !!v || "OTP is required",
-      (v) => (v && v.length === 6) || "OTP must be exactly 6 characters",
-      (v) => /^[0-9]*$/.test(v) || "Phone number must be numeric",
-    ],
-    checkbox: false,
-  }),
+<script setup lang="ts">
+const otp = ref("");
+const recaptcha = ref<HTMLDivElement | null>(null);
+const loading = ref<boolean>(false);
+const form = ref<HTMLFormElement | null>(null);
+const $toast = useToast();
 
-  methods: {
-    ...mapActions(useUserStore, ["registerUser"]),
-    async validate() {
-      const valid = this.$refs.form.validate();
-      if (valid) {
-        try{
-        await this.registerUser();
-        this.$router.push("/add-face");
-        } catch (error) {
-          this.$toast.error(error);
-        }
-      }
-    },
-    reset() {
-      this.$refs.form.reset();
-    },
-    resetValidation() {
-      this.$refs.form.resetValidation();
-    },
-  },
+const $router = useRouter();
+
+const { sendOTP, verifyOTP } = useFirebaseAuth();
+
+console.log("otp");
+console.log($router);
+console.log($toast);
+
+const otpRules = [
+  (v: string) => !!v || "OTP is required",
+  (v: string) => (v && v.length === 6) || "OTP must be exactly 6 characters",
+  (v: string) => /^[0-9]*$/.test(v) || "Phone number must be numeric",
+];
+
+const { registerUser, $state } = useUserStore();
+
+onMounted(async () => {
+  console.log("mounted otp");
+  if (!$state.userRegister?.phone) {
+    $router.push("/register");
+  }
+  try {
+    console.log("sending otp");
+    loading.value = true;
+    await sendOTP(("+" + $state.userRegister?.phone) as string, recaptcha.value);
+    console.log("sent otp");
+  } catch (error) {
+    console.error(error);
+    $toast.error(error);
+  } finally {
+    loading.value = false;
+  }
+});
+
+const validate = async () => {
+  let valid = true;
+  console.log("otp", otp.value);
+  otpRules.forEach((rule) => {
+    if(!valid) return;
+    const error = rule(otp.value);
+    
+    console.log("error", error);
+    if (error !== true) {
+      $toast.error(new Error(error as string));
+      valid = false;
+    }
+  });
+  console.log("valid", valid);
+  if (valid) {
+    try {
+      loading.value = true;
+      await verifyOTP(otp.value);
+      // await registerUser();
+      // $router.push("/add-face");
+    } catch (error) {
+      $toast.error(error);
+    } finally {
+      loading.value = false;
+    }
+  }
+};
+
+const reset = () => {
+  form.value && form.value.reset();
+};
+
+const resetValidation = () => {
+  form.value && resetValidation();
 };
 </script>
