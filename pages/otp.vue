@@ -11,10 +11,6 @@
         Please check your phone and paste the code below.
       </div>
 
-      <div ref="recaptcha">
-
-      </div>
-
       <v-otp-input
         v-model="otp"
         type="text"
@@ -59,7 +55,7 @@
 </template>
 <script setup lang="ts">
 const otp = ref("");
-const recaptcha = ref<HTMLDivElement | null>(null);
+
 const loading = ref<boolean>(false);
 const form = ref<HTMLFormElement | null>(null);
 const $toast = useToast();
@@ -88,7 +84,7 @@ onMounted(async () => {
   try {
     console.log("sending otp");
     loading.value = true;
-    await sendOTP(("+" + $state.userRegister?.phone) as string, recaptcha.value);
+    await sendOTP(("+" + $state.userRegister?.phone) as string, 'grecaptcha');
     console.log("sent otp");
   } catch (error) {
     console.error(error);
@@ -116,8 +112,8 @@ const validate = async () => {
     try {
       loading.value = true;
       await verifyOTP(otp.value);
-      // await registerUser();
-      // $router.push("/add-face");
+      await registerUser();
+      $router.push("/add-face");
     } catch (error) {
       $toast.error(error);
     } finally {

@@ -3,6 +3,7 @@
     <NuxtPage />
   </NuxtLayout>
   <v-toast />
+  <div id="grecaptcha"></div>
 </template>
 <script>
 import { mapActions } from "pinia";

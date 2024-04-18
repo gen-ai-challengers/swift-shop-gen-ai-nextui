@@ -33,13 +33,11 @@ export default function () {
         },
       });
 
-      const confirmationResult = await signInWithPhoneNumber(
+      confirmationResult.value = await signInWithPhoneNumber(
         auth,
         phoneNumber,
         recaptchaVerifier.value as RecaptchaVerifier
       );
-
-      console.log(confirmationResult);
     } catch (error: unknown) {
       if (error instanceof Error) {
         // handle error
